@@ -1,24 +1,25 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from contextlib import asynccontextmanager
+
+from fastapi import Depends, FastAPI
+from sqlalchemy.orm import Session
+
+from .database import Base, engine, get_db
+from .models import Product
+from .seed import seed_products
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    seed_products()
+    yield
+
 
 app = FastAPI(
     title="CloudNativeShop Product Service",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
-
-
-class Product(BaseModel):
-    id: int
-    name: str
-    price: float
-    stock: int
-
-
-products = [
-    Product(id=1, name="Laptop", price=75000, stock=10),
-    Product(id=2, name="Keyboard", price=2500, stock=25),
-    Product(id=3, name="Mouse", price=1200, stock=40),
-]
 
 
 @app.get("/")
@@ -37,16 +38,24 @@ def health():
 
 
 @app.get("/products")
-def get_products():
-    return products
+def get_products(db: Session = Depends(get_db)):
+    return db.query(Product).all()
 
 
 @app.get("/products/{product_id}")
-def get_product(product_id: int):
-    for product in products:
-        if product.id == product_id:
-            return product
+def get_product(
+    product_id: int,
+    db: Session = Depends(get_db)
+):
+    product = (
+        db.query(Product)
+        .filter(Product.id == product_id)
+        .first()
+    )
 
-    return {
-        "error": "Product not found"
-    }
+    if not product:
+        return {
+            "error": "Product not found"
+        }
+
+    return product
