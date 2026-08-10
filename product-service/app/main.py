@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from .database import Base, engine, get_db
@@ -18,22 +19,28 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="CloudNativeShop Product Service",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
+
+
+class ProductCreate(BaseModel):
+    name: str
+    price: float
+    stock: int
 
 
 @app.get("/")
 def root():
     return {
         "service": "product-service",
-        "status": "running"
+        "status": "running",
     }
 
 
 @app.get("/health")
 def health():
     return {
-        "status": "healthy"
+        "status": "healthy",
     }
 
 
@@ -45,7 +52,7 @@ def get_products(db: Session = Depends(get_db)):
 @app.get("/products/{product_id}")
 def get_product(
     product_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     product = (
         db.query(Product)
@@ -54,8 +61,27 @@ def get_product(
     )
 
     if not product:
-        return {
-            "error": "Product not found"
-        }
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found",
+        )
+
+    return product
+
+
+@app.post("/products", status_code=201)
+def create_product(
+    product_data: ProductCreate,
+    db: Session = Depends(get_db),
+):
+    product = Product(
+        name=product_data.name,
+        price=product_data.price,
+        stock=product_data.stock,
+    )
+
+    db.add(product)
+    db.commit()
+    db.refresh(product)
 
     return product
