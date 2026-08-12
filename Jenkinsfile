@@ -43,12 +43,34 @@ pipeline {
             }
         }
 
+        stage('Trivy Product Scan') {
+            steps{
+                sh '''
+                    trivy image \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 1 \
+                    cloudnative-shop-product:${BUILD_NUMBER}
+                '''
+            }
+        }
+
         stage('Build Order Image') {
             steps {
                 sh '''
                     docker build \
                         -t cloudnative-shop-order:${BUILD_NUMBER} \
                         ./order-service
+                '''
+            }
+        }
+
+        stage('Trivy Order Scan'){
+            steps{
+                sh '''
+                    trivy image \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 1 \
+                    cloudnative-shop-order:${BUILD_NUMBER}
                 '''
             }
         }
