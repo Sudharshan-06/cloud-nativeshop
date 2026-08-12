@@ -50,7 +50,7 @@ pipeline {
                       --severity HIGH,CRITICAL \
                       --exit-code 0 \
                       --format table \
-                      cloudnative-shop-product:4
+                      cloudnative-shop-product:${BUILD_NUMBER}
                 '''
             }
         }
@@ -72,7 +72,7 @@ pipeline {
                       --severity HIGH,CRITICAL \
                       --exit-code 0 \
                       --format table \
-                      cloudnative-shop-order:4
+                      cloudnative-shop-order:${BUILD_NUMBER}
                 '''
             }
         }
