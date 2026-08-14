@@ -73,6 +73,30 @@ pipeline {
             }
         }
 
+        stage('Push Product Image') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKERHUB_USERNAME'
+                        passwordVariable: 'DOCKERHUB_TOKEN'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+                        docker tag cloudnative-shop-product:${BUILD_NUMBER} \
+                            $DOCKERHUB_USERNAME/cloudnative-shop-product:${BUILD_NUMBER}
+
+                        docker push \
+                            $DOCKERHUB_USERNAME/cloudnative-shop-product:${BUILD_NUMBER}
+
+                        docker logout
+                    '''
+                }
+            }
+        }
+
         stage('Build Order Image') {
             steps {
                 sh '''
@@ -92,6 +116,30 @@ pipeline {
                       --format table \
                       cloudnative-shop-order:${BUILD_NUMBER}
                 '''
+            }
+        }
+        
+        stage('Push Order Image') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKERHUB_USERNAME'
+                        passwordVariable: 'DOCKERHUB_TOKEN'                    
+                    )
+                ])  {
+                    sh '''
+                        echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password_stdin
+
+                        docker tag cloudnative-shop-order:${BUILD_NUMBER} \
+                            $DOCKERHUB_USERNAME/cloudnative-shop-order:${BUILD_NUMBER}
+
+                        docker push \
+                            $DOCKERHUB_USERNAME/cloudnative-shop-order:${BUILD_NUMBER}
+
+                        docker logout
+                    '''
+                }
             }
         }
     }
