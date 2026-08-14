@@ -33,6 +33,24 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis'){
+            steps{
+                scripts{
+                    def scannerHome = tool 'SonarScanner'
+
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=cloudnative-shop \
+                            -Dsonar.projectName=CloudNativeShop \
+                            -Dsonar.sources=product-service,order-service \
+                            -Dsonar.python.version=3.12
+                        """ 
+                    }
+                }
+            }
+        }
+
         stage('Build Product Image') {
             steps {
                 sh '''
