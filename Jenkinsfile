@@ -129,7 +129,7 @@ pipeline {
                     )
                 ])  {
                     sh '''
-                        echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password_stdin
+                        echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
 
                         docker tag cloudnative-shop-order:${BUILD_NUMBER} \
                             $DOCKERHUB_USERNAME/cloudnative-shop-order:${BUILD_NUMBER}
