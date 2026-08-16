@@ -88,6 +88,9 @@ pipeline {
                         docker tag cloudnative-shop-product:${BUILD_NUMBER} \
                             $DOCKERHUB_USERNAME/cloudnative-shop-product:${BUILD_NUMBER}
 
+                        docker tag cloudnative-shop-product:${BUILD_NUMBER} \
+                            $DOCKERHUB_USERNAME/cloudnative-shop-product:latest
+
                         docker push \
                             $DOCKERHUB_USERNAME/cloudnative-shop-product:${BUILD_NUMBER}
 
@@ -136,6 +139,9 @@ pipeline {
 
                         docker tag cloudnative-shop-order:${BUILD_NUMBER} \
                             $DOCKERHUB_USERNAME/cloudnative-shop-order:${BUILD_NUMBER}
+
+                        docker tag cloudnative-shop-order:${BUILD_NUMBER} \
+                            $DOCKERHUB_USERNAME/cloudnative-shop-order:latest
 
                         docker push \
                             $DOCKERHUB_USERNAME/cloudnative-shop-order:${BUILD_NUMBER}
