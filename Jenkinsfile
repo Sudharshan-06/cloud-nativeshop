@@ -146,7 +146,7 @@ pipeline {
                         docker push \
                             $DOCKERHUB_USERNAME/cloudnative-shop-order:${BUILD_NUMBER}
 
-                        docker pushh \
+                        docker push \
                             $DOCKERHUB_USERNAME/cloudnative-shop-order:latest
 
                         docker logout
