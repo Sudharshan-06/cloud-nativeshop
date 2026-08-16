@@ -91,6 +91,9 @@ pipeline {
                         docker push \
                             $DOCKERHUB_USERNAME/cloudnative-shop-product:${BUILD_NUMBER}
 
+                        docker push \
+                            $DOCKERHUB_USERNAME/cloudnative-shop-product:latest
+
                         docker logout
                     '''
                 }
@@ -136,6 +139,9 @@ pipeline {
 
                         docker push \
                             $DOCKERHUB_USERNAME/cloudnative-shop-order:${BUILD_NUMBER}
+
+                        docker pushh \
+                            $DOCKERHUB_USERNAME/cloudnative-shop-order:latest
 
                         docker logout
                     '''
