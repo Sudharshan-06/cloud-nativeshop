@@ -178,25 +178,6 @@ pipeline {
                 }
             }
         }
-        stage('Update Kubernetes Manifests') {
-            steps {
-                sh '''
-                    sed -i "s|sudharshannnn/cloudnative-shop-product:[^[:space:]]*|sudharshannnn/cloudnative-shop-product:${BUILD_NUMBER}|" k8s/product-deployment.yaml
-
-                    sed -i "s|sudharshannnn/cloudnative-shop-order:[^[:space:]]*|sudharshannnn/cloudnative-shop-order:${BUILD_NUMBER}|" k8s/order-deployment.yaml
-
-                    git config user.name "Jenkins"
-                    git config user.email "jenkins@localhost"
-
-                    git add k8s/product-deployment.yaml k8s/order-deployment.yaml
-
-                    git commit -m "ci: update images to build ${BUILD_NUMBER}" || true
-
-                    git push origin HEAD:master
-                '''
-            }
-        }
-    }
 
     post {
         success {
