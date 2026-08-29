@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: sudharshannnn/cloudnative-shop-order:17
+          image: sudharshannnn/cloudnative-shop-order:20
           imagePullPolicy: Always
           ports:
             - containerPort: 8002
