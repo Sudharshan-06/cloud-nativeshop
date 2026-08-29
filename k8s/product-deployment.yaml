@@ -4,7 +4,7 @@ metadata:
   name: product-service
   namespace: cloudnative-shop
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: product-service
@@ -19,6 +19,9 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 8001
+          env:
+            - name: DATABASE_URL
+              value: postgresql://clouduser:cloudpassword@postgres:5432/cloudnative
           resources:
             requests:
               cpu: 100m
