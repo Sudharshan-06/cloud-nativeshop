@@ -154,6 +154,30 @@ pipeline {
                 }
             }
         }
+        stage('Update GitOps Manifests') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'github-push',
+                    usernameVariable: 'GITHUB_USER',
+                    passwordVariable: 'GITHUB_TOKEN'
+                )]) {
+                    sh '''
+                        sed -i "s|sudharshannnn/cloudnative-shop-product:[^ ]*|sudharshannnn/cloudnative-shop-product:${BUILD_NUMBER}|" k8s/product-deployment.yaml
+
+                        sed -i "s|sudharshannnn/cloudnative-shop-order:[^ ]*|sudharshannnn/cloudnative-shop-order:${BUILD_NUMBER}|" k8s/order-deployment.yaml
+
+                        git config user.name "Jenkins"
+                        git config user.email "jenkins@localhost"
+
+                        git add k8s/product-deployment.yaml k8s/order-deployment.yaml
+
+                        git commit -m "ci: deploy build ${BUILD_NUMBER}" || true
+
+                        git push https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/Sudharshan-06/cloud-nativeshop.git HEAD:master
+                    '''
+                }
+            }
+        }
         stage('Update Kubernetes Manifests') {
             steps {
                 sh '''
