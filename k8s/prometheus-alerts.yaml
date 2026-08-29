@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cloudnative-shop-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: cloudnative-shop
+      rules:
+
+        - alert: CloudNativeShopPodDown
+          expr: kube_pod_status_ready{namespace="cloudnative-shop", condition="true"} == 0
+          for: 2m
+          labels:
+            severity: critical
+            app: cloudnative-shop
+          annotations:
+            summary: "CloudNativeShop pod is down"
+            description: "A CloudNativeShop pod has been unavailable for more than 2 minutes."
+
+        - alert: CloudNativeShopPodRestarting
+          expr: increase(kube_pod_container_status_restarts_total{namespace="cloudnative-shop"}[10m]) > 3
+          for: 2m
+          labels:
+            severity: warning
+            app: cloudnative-shop
+          annotations:
+            summary: "CloudNativeShop pod is restarting"
+            description: "A CloudNativeShop container restarted more than 3 times in 10 minutes."

@@ -5,6 +5,7 @@ metadata:
   namespace: cloudnative-shop
 spec:
   replicas: 2
+  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: order-service
@@ -15,7 +16,7 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: sudharshannnn/cloudnative-shop-order:19
+          image: sudharshannnn/cloudnative-shop-order:17
           imagePullPolicy: Always
           ports:
             - containerPort: 8002
